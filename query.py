@@ -5,6 +5,7 @@ import MySQLdb
 import pygal
 
 from datetime import datetime
+from pygal.style import LightGreenStyle
 from flask import Flask
 from flask import request
 from flask import render_template
@@ -63,7 +64,7 @@ def pygalexample():
      palm_data_points = ([int(x[0]) for x in row])
 
      try:
-	graph = pygal.Line()
+	graph = pygal.Line(fill=False, interpolate='cubic', style=LightGreenStyle)
 	graph.title = 'plant moisture data'
 	graph.x_labels  = '1' 
         graph.add('coffee_moisture', list(coffee_data_points))
