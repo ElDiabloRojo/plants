@@ -50,23 +50,24 @@ def pygalexample():
                           user='root',
                           passwd='H3ll0nurse!#')
      cursor = db.cursor()
-     sql = "SELECT moisture FROM sense_data WHERE plant = 'coffee' LIMIT 100"
-     cursor.execute(sql)
+     coffee_sql = "SELECT moisture FROM sense_data WHERE plant = 'coffee' LIMIT 100"
+     palm_sql = " SELECT moisture FROM sense_data WHERE plant = 'palm' LIMIT 100"
+     cursor.execute(coffee_sql)
      row = cursor.fetchall()
      db.commit()
-     print(type(row))
-     data_points = ([int(x[0]) for x in row])
-     print(type(data_points))
-     #str =  ','.join(row)
-     #print (str)
-     #for var in row:
-     #       print (type(str(var[0])))
+     coffee_data_points = ([int(x[0]) for x in row])
+
+     cursor.execute(palm_sql)
+     row = cursor.fetchall()
+     db.commit()
+     palm_data_points = ([int(x[0]) for x in row])
 
      try:
 	graph = pygal.Line()
-	graph.title = 'coffee plant moisture over time'
-	graph.x_labels  = data_points
-        graph.add('coffee_moisture', list(data_points))
+	graph.title = 'plant moisture data'
+	graph.x_labels  = '1' 
+        graph.add('coffee_moisture', list(coffee_data_points))
+        graph.add('palm_moisture', list(palm_data_points))
 	graph_data = graph.render_data_uri()
         return render_template("graphing.html", graph_data = graph_data)
      except Exception, e:
