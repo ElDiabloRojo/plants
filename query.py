@@ -64,9 +64,9 @@ def pygalexample():
      palm_data_points = ([int(x[0]) for x in row])
 
      try:
-	graph = pygal.Line(fill=False, interpolate='cubic', style=LightGreenStyle)
+        graph = pygal.Line(fill=False, interpolate='cubic', style=LightGreenStyle)
 	graph.title = 'plant moisture data'
-	graph.x_labels  = '1' 
+        graph.x_labels  = '1' # TODO: add time series list 
         graph.add('coffee_moisture', list(coffee_data_points))
         graph.add('palm_moisture', list(palm_data_points))
 	graph_data = graph.render_data_uri()
