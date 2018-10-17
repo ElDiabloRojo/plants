@@ -68,9 +68,9 @@ def pygalexample():
                           user='root',
                           passwd='H3ll0nurse!#')
      cursor = db.cursor()
-     coffee_sql = "SELECT moisture FROM sense_data WHERE plant = 'coffee' ORDER BY ID DESC"
-     palm_sql = " SELECT moisture FROM sense_data WHERE plant = 'palm' ORDER BY ID DESC"
-     g_time = "SELECT timestamp FROM sense_data WHERE plant = 'coffee' AND DATE(timestamp) = DATE(CURDATE()) ORDER BY ID DESC"
+     coffee_sql = "SELECT moisture,timestamp FROM sense_data WHERE plant = 'coffee' AND DATE(timestamp) = DATE(CURDATE()) ORDER BY ID DESC"
+     palm_sql = " SELECT moisture,timestamp FROM sense_data WHERE plant = 'palm' AND DATE(timestamp) = DATE(CURDATE()) ORDER BY ID DESC"
+     g_time = "SELECT TIME(timestamp) FROM sense_data WHERE plant = 'coffee' AND DATE(timestamp) = DATE(CURDATE()) ORDER BY ID DESC"
 
      cursor.execute(g_time)
      row = cursor.fetchall()
