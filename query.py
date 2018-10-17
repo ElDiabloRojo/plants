@@ -39,6 +39,23 @@ def temp():
      db.commit()
      return 'success' 
 
+@app.route('/feedme/')
+def feed():
+     db = MySQLdb.connect(host='localhost',
+                          db='api',
+                          user='root',
+                          passwd='H3ll0nurse!#')
+     cursor = db.cursor()
+
+     sql = "SELECT moisture FROM sense_data ORDER BY ID DESC LIMIT 1"
+     cursor.execute(sql)
+     print(cursor._executed)
+     result = cursor.fetchall()
+     for i in result:
+        feed = (str(i[0]))
+     db.commit()
+     return feed
+
 @app.route('/hello/<user>')
 def hello_name(user):
     return render_template('hello.html', name = user)
@@ -51,10 +68,18 @@ def pygalexample():
                           user='root',
                           passwd='H3ll0nurse!#')
      cursor = db.cursor()
-     coffee_sql = "SELECT moisture FROM sense_data WHERE plant = 'coffee' LIMIT 100"
-     palm_sql = " SELECT moisture FROM sense_data WHERE plant = 'palm' LIMIT 100"
+     coffee_sql = "SELECT moisture FROM sense_data WHERE plant = 'coffee'"
+     palm_sql = " SELECT moisture FROM sense_data WHERE plant = 'palm'"
+     g_time = " SELECT timestamp FROM sense_data WHERE plant = 'coffee' LIMIT 100"
+
+     cursor.execute(g_time)
+     row = cursor.fetchall()
+     db.commit()
+     g_time_x = ([str(x[0]) for x in row])
+
      cursor.execute(coffee_sql)
      row = cursor.fetchall()
+     print(type(row))
      db.commit()
      coffee_data_points = ([int(x[0]) for x in row])
 
@@ -66,7 +91,7 @@ def pygalexample():
      try:
         graph = pygal.Line(fill=False, interpolate='cubic', style=LightGreenStyle)
 	graph.title = 'plant moisture data'
-        graph.x_labels  = '1' # TODO: add time series list 
+        graph.x_labels  = g_time_x [0], g_time_x[25], g_time_x[50], g_time_x[75], g_time_x[99]# TODO: add time series list 
         graph.add('coffee_moisture', list(coffee_data_points))
         graph.add('palm_moisture', list(palm_data_points))
 	graph_data = graph.render_data_uri()
