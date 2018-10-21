@@ -68,18 +68,18 @@ def pygalexample():
                           user='root',
                           passwd='H3ll0nurse!#')
      cursor = db.cursor()
-     coffee_sql = "SELECT moisture FROM sense_data WHERE plant = 'coffee'"
-     palm_sql = " SELECT moisture FROM sense_data WHERE plant = 'palm'"
-     g_time = " SELECT timestamp FROM sense_data WHERE plant = 'coffee' LIMIT 100"
+     coffee_sql = "SELECT moisture,timestamp FROM sense_data WHERE plant = 'coffee' AND DATE(timestamp) = DATE(CURDATE()) ORDER BY ID DESC"
+     palm_sql = " SELECT moisture,timestamp FROM sense_data WHERE plant = 'palm' AND DATE(timestamp) = DATE(CURDATE()) ORDER BY ID DESC"
+     g_time = "SELECT TIME(timestamp) FROM sense_data WHERE plant = 'coffee' AND DATE(timestamp) = DATE(CURDATE()) ORDER BY ID DESC"
 
      cursor.execute(g_time)
      row = cursor.fetchall()
      db.commit()
+     formatted_x = ""
      g_time_x = ([str(x[0]) for x in row])
 
      cursor.execute(coffee_sql)
      row = cursor.fetchall()
-     print(type(row))
      db.commit()
      coffee_data_points = ([int(x[0]) for x in row])
 
@@ -89,11 +89,11 @@ def pygalexample():
      palm_data_points = ([int(x[0]) for x in row])
 
      try:
-        graph = pygal.Line(fill=False, interpolate='cubic', style=LightGreenStyle)
+        graph = pygal.Line(fill=False, show_only_major_dots=True, interpolate='cubic', x_label_rotation=20, x_labels_major_every=10, show_minor_x_labels=False, show_x_labels=True, style=LightGreenStyle)
 	graph.title = 'plant moisture data'
-        graph.x_labels  = g_time_x [0], g_time_x[25], g_time_x[50], g_time_x[75], g_time_x[99]# TODO: add time series list 
-        graph.add('coffee_moisture', list(coffee_data_points))
-        graph.add('palm_moisture', list(palm_data_points))
+        graph.x_labels  = reversed(g_time_x[0::25])
+        graph.add('coffee_moisture', list(reversed(coffee_data_points[0::25])))
+        graph.add('palm_moisture', list(reversed(palm_data_points[0::25])))
 	graph_data = graph.render_data_uri()
         return render_template("graphing.html", graph_data = graph_data)
      except Exception, e:
