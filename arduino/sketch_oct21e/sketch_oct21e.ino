@@ -58,7 +58,6 @@ void loop() {
                                                       
      if (weatherCode > 0) {
         // Parsing
-        Serial.println(weather.getString());
         JsonObject& weather_object = jsonBuffer.parseObject(weather.getString());
         // Parameters
         int datetime = weather_object["dt"];
@@ -86,9 +85,7 @@ void loop() {
      Serial.println(scheduleCode);
 
      if (scheduleCode > 0) {
-     Serial.println("initialised HTTP client");
-                                                              
-       Serial.println(schedule.getString());
+     Serial.println("initialised HTTP client");                                                 
        JsonObject& schedule_object = jsonBuffer.parseObject(schedule.getString());
        // Parameters
        int daylight_toggle = schedule_object["daylight"];
@@ -101,17 +98,17 @@ void loop() {
        if (daylight_toggle == 1) {
        Serial.println("beginning light sequence\n");
          
-       if (sunrise <= datetime && datetime <= sunset) {
-         digitalWrite(lightRelay,HIGH);
-         Serial.print("daylight\n");
-       }
-       else if (datetime < sunrise || datetime > sunset) {
-         digitalWrite(lightRelay,LOW);
-         Serial.print("nighttime\n");
-       }
-       else {
-         Serial.println("no data\n");
-       }
+         if (sunrise <= datetime && datetime <= sunset) {
+           digitalWrite(lightRelay,HIGH);
+           Serial.print("daylight\n");
+         }
+         else if (datetime < sunrise || datetime > sunset) {
+           digitalWrite(lightRelay,LOW);
+           Serial.print("nighttime\n");
+         }
+         else {
+           Serial.println("no data\n");
+         }
      }
      schedule.end();
      // Pump
@@ -129,4 +126,5 @@ void loop() {
      }
   Serial.print("end cycle...\n");
   delay(120000);
+}
 }
