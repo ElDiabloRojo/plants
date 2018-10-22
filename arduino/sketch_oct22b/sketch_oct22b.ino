@@ -21,9 +21,6 @@ int redLED = 15;
 const size_t bufferSize = JSON_OBJECT_SIZE(2) + JSON_OBJECT_SIZE(3) + JSON_OBJECT_SIZE(5) + JSON_OBJECT_SIZE(8) + 370;
 DynamicJsonBuffer jsonBuffer(bufferSize);
 
-int datetime, sunrise, sunset;
-String client_name;
-
 void setup() {
   Serial.begin(115200);
   Serial.setDebugOutput(true);
@@ -41,33 +38,29 @@ void setup() {
   digitalWrite(greenLED, LOW);
   digitalWrite(redLED, LOW);
   }
-
+  
   // Scheduler
   Serial.println("connected...\n");
   HTTPClient http;
   Serial.println("initialised HTTP client");
+  Serial.println("waiting for time");
 }
 
-JsonObject& open_client(String query, String client_name) {
+JsonObject& open_client(String query) {
   HTTPClient client_name;
   client_name.begin(query);
   int client_code = client_name.GET();
-  Serial.println(client_code);
   JsonObject& json_object = jsonBuffer.parseObject(client_name.getString());
   client_name.end();
   if (client_code > 0 ) {
     return json_object;
   }
-  else {
-    return 1;
-  }
-
 }
 
 void loop() {
   if (WiFi.status() == WL_CONNECTED) {
     // Weather API Query
-    open_client(weather_query, "weather");
+    JsonObject& weather_object = open_client(weather_query);
     // Parameters
     int datetime = weather_object["dt"];
     int sunrise = weather_object["sys"]["sunrise"];
@@ -85,8 +78,7 @@ void loop() {
     Serial.print("\n");
 
     // Schedule API Query
-    open_client(schedule_query, "schedule");
-
+    JsonObject& schedule_object = open_client(schedule_query);
     int daylight_toggle = schedule_object["daylight"];
     int pump_toggle = schedule_object["pump"];
     // Light
